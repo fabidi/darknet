@@ -19,6 +19,8 @@ cfg/
 darknet
 .fuse*
 .idea
+libdarknet.*
+*.zip
 
 # OS Generated #
 .DS_Store*
