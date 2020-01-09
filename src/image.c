@@ -236,6 +236,22 @@ image **load_alphabet()
     return alphabets;
 }
 
+void normalize_to_bounds(int * x1, int * x2, int min, int max, int range) {
+
+    if (*x1 < min)
+        *x1 = min;
+    if (*x2 > max)
+        *x2 = max;
+
+    if (*x2 - *x1 < range) {
+     if (*x1 == 0)
+         *x2 = *x1 + range;
+     else if (*x2 == max)
+         *x1 = *x2 - range;
+    }
+
+}
+
 void draw_crop(image im, int horizontalRatio, int variableLower, int variableHigher, int personTopMost, int width, image **alphabet, char* jsonBuff) {
 
     int cropHeight = 0;
@@ -246,6 +262,7 @@ void draw_crop(image im, int horizontalRatio, int variableLower, int variableHig
     int cropBot = 0;
     char labelstr[4096] = {0};
     int cropCenter = (variableLower + variableHigher) / 2;
+    float ratioMultiplier = 0;
     char cropName[256] = {0};
 
     int offset = 0;
@@ -265,63 +282,55 @@ void draw_crop(image im, int horizontalRatio, int variableLower, int variableHig
     rgb[1] = green;
     rgb[2] = blue;
 
-    if (im.w > im.h) {
-        if (horizontalRatio == 16){
-            strcat(labelstr, "16x9 Crop");
-            strcat(cropName, "sixteenByNine");
-            cropWidth = im.w;
-            cropHeight = im.w * 9 / 16;
-            cropLeft = 0;
-            cropRight = im.w;
-            cropTop = cropCenter - cropHeight / 2;
-
-            if (personTopMost > 0 && personTopMost < cropTop)
-                cropTop = personTopMost;
-
-            if (cropTop < 0)
-                cropTop = 0;
-            cropBot = cropCenter + cropHeight / 2;
-            if (cropBot > im.h)
-                cropBot = im.h;
-
-            if (cropBot - cropTop < cropHeight) {
-                if (cropTop == 0)
-                    cropBot = cropTop + cropHeight;
-                else if (cropBot == im.h)
-                    cropTop = cropBot - cropHeight;
-            }
-        }
-        else if (horizontalRatio == 4){
-            strcat(labelstr, "4x3 Crop");
-            strcat(cropName, "fourByThree");
-            cropWidth = im.h * 4 / 3;
-            cropHeight = im.h;
-            cropTop = 0;
-            cropBot = im.h;
-            cropLeft = cropCenter - cropWidth / 2;
-            if (cropLeft < 0)
-             cropLeft = 0;
-            cropRight = cropCenter + cropWidth / 2;
-            if (cropRight > im.w)
-             cropRight = im.w;
-
-            if (cropRight - cropLeft < cropWidth) {
-             if (cropLeft == 0)
-                 cropRight = cropLeft + cropWidth;
-             else if (cropRight == im.w)
-                 cropLeft = cropRight - cropWidth;
-            }
-         }
-
-        printf("Crop Bounding Box: Left=%d, Top=%d, Right=%d, Bottom=%d\n", cropLeft, cropTop, cropRight, cropBot);
-        printf("Crop Misc: center=%d, cropWidth=%d, cropHeight=%d\n", cropCenter, cropWidth,cropHeight);
-        sprintf(jsonBuff, "\"%s\": {\"left\": \"%d\",\"top\": \"%d\",\"right\": \"%d\",\"bot\": \"%d\"}", cropName, cropLeft, cropTop, cropRight, cropBot);
-
-        draw_box_width(im, cropLeft, cropTop, cropRight, cropBot, width, red, green, blue);
-        image label = get_label(alphabet, labelstr, (im.h*.03));
-        draw_label(im, cropTop + width, cropLeft, label, rgb);
-        free_image(label);
+    if (horizontalRatio == 16) {
+        strcat(labelstr, "16x9 Crop");
+        strcat(cropName, "sixteenByNine");
+        ratioMultiplier = 9.0 / 16;
     }
+    else if (horizontalRatio == 4) {
+        strcat(labelstr, "4x3 Crop");
+        strcat(cropName, "fourByThree");
+        ratioMultiplier = 3.0 / 4;
+    }
+
+    if (horizontalRatio == 4 && im.w <= im.h)
+        printf("Portrait");
+
+    if (horizontalRatio == 16 || (horizontalRatio == 4 && im.w <= im.h)) {
+        cropWidth = im.w;
+        cropHeight = im.w * ratioMultiplier;
+        cropLeft = 0;
+        cropRight = im.w;
+        cropTop = cropCenter - cropHeight / 2;
+
+        if (personTopMost > 0 && personTopMost < cropTop)
+            cropTop = personTopMost;
+
+        cropBot = cropCenter + cropHeight / 2;
+
+        normalize_to_bounds(& cropTop, & cropBot, 0, im.h, cropHeight);
+
+    }
+    else if (horizontalRatio == 4){
+
+        cropWidth = im.h * 4 / 3;
+        cropHeight = im.h;
+        cropTop = 0;
+        cropBot = im.h;
+
+        cropLeft = cropCenter - cropWidth / 2;
+        cropRight = cropCenter + cropWidth / 2;
+        normalize_to_bounds(& cropLeft, & cropRight, 0, im.w, cropWidth);
+     }
+
+//        printf("Crop Bounding Box: Left=%d, Top=%d, Right=%d, Bottom=%d\n", cropLeft, cropTop, cropRight, cropBot);
+//        printf("Crop Misc: center=%d, cropWidth=%d, cropHeight=%d\n", cropCenter, cropWidth,cropHeight);
+    sprintf(jsonBuff, "\"%s\": {\"left\": \"%d\",\"top\": \"%d\",\"right\": \"%d\",\"bot\": \"%d\"}", cropName, cropLeft, cropTop, cropRight, cropBot);
+
+    draw_box_width(im, cropLeft, cropTop, cropRight, cropBot, width, red, green, blue);
+    image label = get_label(alphabet, labelstr, (im.h*.03));
+    draw_label(im, cropTop + width, cropLeft, label, rgb);
+    free_image(label);
 
 }
 
@@ -364,7 +373,7 @@ void draw_detections(image im, detection *dets, int num, float thresh, char **na
                     strcat(labelstr, ", ");
                     strcat(labelstr, names[j]);
                 }
-                printf("%s: %.0f%%\n", names[j], dets[i].prob[j]*100);
+//                printf("%s: %.0f%%\n", names[j], dets[i].prob[j]*100);
             }
         }
         if(class >= 0){
@@ -413,7 +422,7 @@ void draw_detections(image im, detection *dets, int num, float thresh, char **na
                 personTopMost = topMost;
             }
 
-            printf("Bounding Box: Left=%d, Top=%d, Right=%d, Bottom=%d\n", left, top, right, bot);
+//            printf("Bounding Box: Left=%d, Top=%d, Right=%d, Bottom=%d\n", left, top, right, bot);
 
             draw_box_width(im, left, top, right, bot, width, red, green, blue);
             if (alphabet) {
@@ -437,13 +446,16 @@ void draw_detections(image im, detection *dets, int num, float thresh, char **na
         personTopMost = personTopMost - personTopMostAdjustment;
 
     draw_crop(im, 16, topMost, botMost, personTopMost, width, alphabet, sixteenByNineBounds);
-    draw_crop(im, 4, leftMost, rightMost, -1, width, alphabet, fourByThreeBounds);
+    if (im.w > im. h)
+        draw_crop(im, 4, leftMost, rightMost, -1, width, alphabet, fourByThreeBounds);
+    else
+        draw_crop(im, 4, topMost, botMost, -1, width, alphabet, fourByThreeBounds);
 
-    printf("width: %d, height: %d\n", im.w, im.h);
+//    printf("width: %d, height: %d\n", im.w, im.h);
     draw_box_width(im, leftMost, topMost, rightMost, botMost, width, 0, 0, 0);
 
     sprintf(resultJsonStr, "{\"detectionResult\": {%s, %s}}", sixteenByNineBounds, fourByThreeBounds);
-    printf("%s\n", resultJsonStr);
+//    printf("%s\n", resultJsonStr);
     fprintf(resultFile, "%s", resultJsonStr);
 
 }
