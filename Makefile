@@ -14,9 +14,9 @@ ARCH= -gencode arch=compute_30,code=sm_30 \
 # ARCH= -gencode arch=compute_52,code=compute_52
 
 VPATH=./src/:./examples
-SLIB=libdarknet.so
-ALIB=libdarknet.a
-EXEC=darknet
+SLIB=./artifacts/libdarknet.so
+ALIB=./artifacts/libdarknet.a
+EXEC=./artifacts/darknet
 OBJDIR=./obj/
 
 CC=gcc
@@ -69,7 +69,7 @@ EXECOBJ = $(addprefix $(OBJDIR), $(EXECOBJA))
 OBJS = $(addprefix $(OBJDIR), $(OBJ))
 DEPS = $(wildcard src/*.h) Makefile include/darknet.h
 
-all: obj backup results $(SLIB) $(ALIB) $(EXEC)
+all: obj backup results artifacts $(SLIB) $(ALIB) $(EXEC)
 #all: obj  results $(SLIB) $(ALIB) $(EXEC)
 
 
@@ -97,6 +97,8 @@ backup:
 	mkdir -p backup
 results:
 	mkdir -p results
+artifacts:
+	mkdir -p artifacts
 
 .PHONY: clean
 
