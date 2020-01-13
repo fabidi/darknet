@@ -15,7 +15,7 @@ jobs:
       uses: actions/upload-artifact@v1.0.0
       with:
         # Artifact name
-        name: darknet
+        name: artifacts
         # Directory containing files to upload
-        path: darknet,libdarknet.a
+        path: artifacts
 
