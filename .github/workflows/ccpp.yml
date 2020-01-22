@@ -15,6 +15,6 @@ jobs:
       uses: actions/upload-artifact@v1.0.0
       with:
         # Artifact name
-        name: objectdetect-vx.x.x-alpha-ubuntu.zip
+        name: objectdetect-vx.x.x-alpha-linux.zip
         # Directory containing files to upload
         path: artifacts
