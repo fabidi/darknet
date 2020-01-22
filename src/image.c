@@ -427,7 +427,7 @@ void draw_detections2(image im, detection *dets, int num, float thresh, char **n
             if(top < 0) top = 0;
             if(bot > im.h-1) bot = im.h-1;
 
-            sprintf(boxJsonStr, "{\"name\": \"%s\",\"left\": \"%d\",\"top\": \"%d\",\"right\": \"%d\",\"bot\": \"%d\"}", labelstr, left, top, right, bot);
+            sprintf(boxJsonStr, "{\"label\": \"%s\",\"left\": \"%d\",\"top\": \"%d\",\"right\": \"%d\",\"bot\": \"%d\"}", labelstr, left, top, right, bot);
             strcat(detectionResultStr, boxJsonStr);
 
             if (computecrop) {
