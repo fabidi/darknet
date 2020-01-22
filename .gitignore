@@ -21,6 +21,8 @@ darknet
 .idea
 libdarknet.*
 *.zip
+results/
+weights/
 
 # OS Generated #
 .DS_Store*
