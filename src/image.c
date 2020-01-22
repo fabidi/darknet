@@ -334,11 +334,15 @@ void draw_crop(image im, int horizontalRatio, int variableLower, int variableHig
 
 }
 
-void draw_detections(image im, detection *dets, int num, float thresh, char **names, image **alphabet, int classes)
+void draw_detections(image im, detection *dets, int num, float thresh, char **names, image **alphabet, int classes) {
+    draw_detections2(im, dets, num, thresh, names, alphabet, classes, 0, 0, 0);
+}
+
+void draw_detections2(image im, detection *dets, int num, float thresh, char **names, image **alphabet, int classes, int debugmode, int writeoutput, int computecrop)
 {
     int i,j;
 
-    char resultJsonStr[256];
+    char resultJsonStr[4096] = {0};
     int leftMost = -1;
     int rightMost = -1;
     int topMost = -1;
@@ -361,8 +365,15 @@ void draw_detections(image im, detection *dets, int num, float thresh, char **na
         printf("Error opening file!\n");
     }
 
+    char detectionResultPrefix[256] = "\"detectionResult\": {\"boundingBoxes\": [";
+    char detectionResultSuffix[256] = "]}";
+    char detectionResultStr[4096] = {0};
+    strcat(detectionResultStr, detectionResultPrefix);
+
     for(i = 0; i < num; ++i){
+
         char labelstr[4096] = {0};
+        char boxJsonStr[256] = {0};
         int class = -1;
         for(j = 0; j < classes; ++j){
             if (dets[i].prob[j] > thresh){
@@ -377,6 +388,11 @@ void draw_detections(image im, detection *dets, int num, float thresh, char **na
             }
         }
         if(class >= 0){
+            // Add comma separator for boxJson strings
+            if (i > 0) {
+                strcat(detectionResultStr, ",");
+            }
+
             width = im.h * .006;
 
             /*
@@ -386,7 +402,8 @@ void draw_detections(image im, detection *dets, int num, float thresh, char **na
                }
              */
 
-            //printf("%d %s: %.0f%%\n", i, names[class], prob*100);
+//          printf("%d %s: %.0f%%\n", i, names[class], prob*100);
+
             offset = class*123457 % classes;
             red = get_color(2,offset,classes);
             green = get_color(1,offset,classes);
@@ -410,52 +427,68 @@ void draw_detections(image im, detection *dets, int num, float thresh, char **na
             if(top < 0) top = 0;
             if(bot > im.h-1) bot = im.h-1;
 
-            if(leftMost == -1 || left < leftMost)
-                leftMost = left;
-            if(rightMost == -1 || right > rightMost)
-                rightMost = right;
-            if(topMost == -1 || top < topMost)
-                topMost = top;
-            if(botMost == -1 || bot > botMost)
-                botMost = bot;
-            if (strcmp(labelstr, "person") == 0 && (personTopMost == -1 || topMost < personTopMost)) {
-                personTopMost = topMost;
+            sprintf(boxJsonStr, "{\"name\": \"%s\",\"left\": \"%d\",\"top\": \"%d\",\"right\": \"%d\",\"bot\": \"%d\"}", labelstr, left, top, right, bot);
+            strcat(detectionResultStr, boxJsonStr);
+
+            if (computecrop) {
+                if(leftMost == -1 || left < leftMost)
+                    leftMost = left;
+                if(rightMost == -1 || right > rightMost)
+                    rightMost = right;
+                if(topMost == -1 || top < topMost)
+                    topMost = top;
+                if(botMost == -1 || bot > botMost)
+                    botMost = bot;
+                if (strcmp(labelstr, "person") == 0 && (personTopMost == -1 || topMost < personTopMost)) {
+                    personTopMost = topMost;
+                }
             }
 
-//            printf("Bounding Box: Left=%d, Top=%d, Right=%d, Bottom=%d\n", left, top, right, bot);
+            if (debugmode)
+                printf("Bounding Box: Left=%d, Top=%d, Right=%d, Bottom=%d\n", left, top, right, bot);
 
-            draw_box_width(im, left, top, right, bot, width, red, green, blue);
-            if (alphabet) {
-                image label = get_label(alphabet, labelstr, (im.h*.03));
-                draw_label(im, top + width, left, label, rgb);
-                free_image(label);
-            }
-            if (dets[i].mask){
-                image mask = float_to_image(14, 14, 1, dets[i].mask);
-                image resized_mask = resize_image(mask, b.w*im.w, b.h*im.h);
-                image tmask = threshold_image(resized_mask, .5);
-                embed_image(tmask, im, left, top);
-                free_image(mask);
-                free_image(resized_mask);
-                free_image(tmask);
+            if (writeoutput) {
+                draw_box_width(im, left, top, right, bot, width, red, green, blue);
+                if (alphabet) {
+                    image label = get_label(alphabet, labelstr, (im.h*.03));
+                    draw_label(im, top + width, left, label, rgb);
+                    free_image(label);
+                }
+                if (dets[i].mask){
+                    image mask = float_to_image(14, 14, 1, dets[i].mask);
+                    image resized_mask = resize_image(mask, b.w*im.w, b.h*im.h);
+                    image tmask = threshold_image(resized_mask, .5);
+                    embed_image(tmask, im, left, top);
+                    free_image(mask);
+                    free_image(resized_mask);
+                    free_image(tmask);
+                }
             }
         }
     }
 
+    strcat(detectionResultStr, detectionResultSuffix);
+
     if (personTopMost > personTopMostAdjustment)
         personTopMost = personTopMost - personTopMostAdjustment;
 
-    draw_crop(im, 16, topMost, botMost, personTopMost, width, alphabet, sixteenByNineBounds);
-    if (im.w > im. h)
-        draw_crop(im, 4, leftMost, rightMost, -1, width, alphabet, fourByThreeBounds);
-    else
-        draw_crop(im, 4, topMost, botMost, -1, width, alphabet, fourByThreeBounds);
+    if (computecrop && writeoutput) {
+        draw_crop(im, 16, topMost, botMost, personTopMost, width, alphabet, sixteenByNineBounds);
+        if (im.w > im. h)
+            draw_crop(im, 4, leftMost, rightMost, -1, width, alphabet, fourByThreeBounds);
+        else
+            draw_crop(im, 4, topMost, botMost, -1, width, alphabet, fourByThreeBounds);
+        // Draw bounding box containing all objects.
+        draw_box_width(im, leftMost, topMost, rightMost, botMost, width, 0, 0, 0);
+    }
 
-//    printf("width: %d, height: %d\n", im.w, im.h);
-    draw_box_width(im, leftMost, topMost, rightMost, botMost, width, 0, 0, 0);
+    sprintf(resultJsonStr, "{%s}", detectionResultStr);
 
-    sprintf(resultJsonStr, "{\"detectionResult\": {%s, %s}}", sixteenByNineBounds, fourByThreeBounds);
-//    printf("%s\n", resultJsonStr);
+    if (debugmode) {
+        printf("width: %d, height: %d\n", im.w, im.h);
+        printf("%s\n", resultJsonStr);
+    }
+
     fprintf(resultFile, "%s", resultJsonStr);
 
 }
