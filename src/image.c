@@ -365,7 +365,7 @@ void draw_detections2(image im, detection *dets, int num, float thresh, char **n
         printf("Error opening file!\n");
     }
 
-    char detectionResultPrefix[256] = "\"detectionResult\": {\"boundingBoxes\": [";
+    char detectionResultPrefix[256] = "{\"boundingBoxes\": [";
     char detectionResultSuffix[256] = "]}";
     char detectionResultStr[4096] = {0};
     strcat(detectionResultStr, detectionResultPrefix);
@@ -482,7 +482,7 @@ void draw_detections2(image im, detection *dets, int num, float thresh, char **n
         draw_box_width(im, leftMost, topMost, rightMost, botMost, width, 0, 0, 0);
     }
 
-    sprintf(resultJsonStr, "{%s}", detectionResultStr);
+    sprintf(resultJsonStr, "%s", detectionResultStr);
 
     if (debugmode) {
         printf("width: %d, height: %d\n", im.w, im.h);
