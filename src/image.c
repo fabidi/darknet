@@ -389,9 +389,10 @@ void draw_detections2(image im, detection *dets, int num, float thresh, char **n
         }
         if(class >= 0){
             // Add comma separator for boxJson strings
-            if (i > 0) {
+            if (i > 0 && detectionResultStr[(strlen(detectionResultStr)-1)] != '[' ) {
                 strcat(detectionResultStr, ",");
             }
+
 
             width = im.h * .006;
 
