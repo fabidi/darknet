@@ -6,7 +6,7 @@
 
 extern void predict_classifier(char *datacfg, char *cfgfile, char *weightfile, char *filename, int top);
 extern void test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filename, float thresh, float hier_thresh, char *outfile, int fullscreen);
-extern void test_detector2(char *datacfg, char *cfgfile, char *weightfile, char *filename, float thresh, float hier_thresh, char *outfile, int fullscreen, int debugmode, int writeoutput, int computecrop);
+extern void test_detector2(char *datacfg, char *cfgfile, char *weightfile, char *filename, float thresh, float hier_thresh, char *outfile, int fullscreen, int debugmode, int imageoutput, int computecrop);
 extern void run_yolo(int argc, char **argv);
 extern void run_detector(int argc, char **argv);
 extern void run_coco(int argc, char **argv);
@@ -436,9 +436,9 @@ int main(int argc, char **argv)
         char *outfile = find_char_arg(argc, argv, "-out", 0);
         int fullscreen = find_arg(argc, argv, "-fullscreen");
         int debugmode = find_arg(argc, argv, "-debugmode");
-        int writeoutput = find_arg(argc, argv, "-writeoutput");
+        int imageoutput = find_arg(argc, argv, "-imageoutput");
         int computecrop = find_arg(argc, argv, "-computecrop");
-        test_detector2("cfg/coco.data", argv[2], argv[3], filename, thresh, .5, outfile, fullscreen, debugmode, writeoutput, computecrop);
+        test_detector2("cfg/coco.data", argv[2], argv[3], filename, thresh, .5, outfile, fullscreen, debugmode, imageoutput, computecrop);
     } else if (0 == strcmp(argv[1], "cifar")){
         run_cifar(argc, argv);
     } else if (0 == strcmp(argv[1], "go")){

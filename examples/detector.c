@@ -559,15 +559,22 @@ void validate_detector_recall(char *cfgfile, char *weightfile)
 }
 
 
-void test_detector2(char *datacfg, char *cfgfile, char *weightfile, char *filename, float thresh, float hier_thresh, char *outfile, int fullscreen, int debugmode, int writeoutput, int computecrop)
+void test_detector2(char *datacfg, char *cfgfile, char *weightfile, char *filename, float thresh, float hier_thresh, char *outfile, int fullscreen, int debugmode, int imageoutput, int computecrop)
 {
+    if (debugmode) {
+        printf("Entering test_detector2\n");
+    }
     list *options = read_data_cfg(datacfg);
     char *name_list = option_find_str(options, "names", "data/names.list");
     char **names = get_labels(name_list);
 
     image **alphabet = load_alphabet();
     network *net = load_network(cfgfile, weightfile, 0);
+    if (debugmode)
+        printf("Before set_batch_network\n");
     set_batch_network(net, 1);
+    if (debugmode)
+        printf("Before set_batch_network\n");
     srand(2222222);
     double time;
     char buff[256];
@@ -575,6 +582,8 @@ void test_detector2(char *datacfg, char *cfgfile, char *weightfile, char *filena
     float nms=.45;
     while(1){
         if(filename){
+            if (debugmode)
+                printf("Reading image file\n");
             strncpy(input, filename, 256);
         } else {
             printf("Enter Image Path: ");
@@ -583,8 +592,16 @@ void test_detector2(char *datacfg, char *cfgfile, char *weightfile, char *filena
             if(!input) return;
             strtok(input, "\n");
         }
+        if (debugmode)
+            printf("Before load_image_color\n");
         image im = load_image_color(input,0,0);
+        if (debugmode) {
+            printf("After load_image_color\n");
+            printf("Before letterbox_image\n");
+        }
         image sized = letterbox_image(im, net->w, net->h);
+        if (debugmode)
+            printf("After letterbox_image\n");
         //image sized = resize_image(im, net->w, net->h);
         //image sized2 = resize_max(im, net->w);
         //image sized = crop_image(sized2, -((net->w - sized2.w)/2), -((net->h - sized2.h)/2), net->w, net->h);
@@ -594,17 +611,19 @@ void test_detector2(char *datacfg, char *cfgfile, char *weightfile, char *filena
 
         float *X = sized.data;
         time=what_time_is_it_now();
-        network_predict(net, X);
+
+        network_predict2(net, X, debugmode);
+
         printf("%s: Predicted in %f seconds.\n", input, what_time_is_it_now()-time);
         int nboxes = 0;
         detection *dets = get_network_boxes(net, im.w, im.h, thresh, hier_thresh, 0, 1, &nboxes);
         //printf("%d\n", nboxes);
         //if (nms) do_nms_obj(boxes, probs, l.w*l.h*l.n, l.classes, nms);
         if (nms) do_nms_sort(dets, nboxes, l.classes, nms);
-        draw_detections2(im, dets, nboxes, thresh, names, alphabet, l.classes, debugmode, writeoutput, computecrop);
+        draw_detections2(im, dets, nboxes, thresh, names, alphabet, l.classes, debugmode, imageoutput, computecrop);
         free_detections(dets, nboxes);
 
-        if (writeoutput) {
+        if (imageoutput) {
             if(outfile){
                 save_image(im, outfile);
             }
@@ -620,6 +639,9 @@ void test_detector2(char *datacfg, char *cfgfile, char *weightfile, char *filena
         free_image(im);
         free_image(sized);
         if (filename) break;
+    }
+    if (debugmode) {
+        printf("Exiting test_detector2");
     }
 }
 
