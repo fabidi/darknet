@@ -562,7 +562,7 @@ void validate_detector_recall(char *cfgfile, char *weightfile)
 void test_detector2(char *datacfg, char *cfgfile, char *weightfile, char *filename, float thresh, float hier_thresh, char *outfile, int fullscreen, int debugmode, int imageoutput, int computecrop)
 {
     if (debugmode) {
-        printf("Entering test_detector2\n");
+        printf("Entering test_detector\n");
     }
     list *options = read_data_cfg(datacfg);
     char *name_list = option_find_str(options, "names", "data/names.list");
@@ -641,7 +641,7 @@ void test_detector2(char *datacfg, char *cfgfile, char *weightfile, char *filena
         if (filename) break;
     }
     if (debugmode) {
-        printf("Exiting test_detector2");
+        printf("Exiting test_detector");
     }
 }
 
