@@ -185,8 +185,10 @@ network *make_network(int n)
     return net;
 }
 
-void forward_network(network *netp)
+void forward_network2(network *netp, int debugmode)
 {
+    if (debugmode)
+        printf("Entering forward_network\n");
 #ifdef GPU
     if(netp->gpu_index >= 0){
         forward_network_gpu(netp);   
@@ -208,6 +210,12 @@ void forward_network(network *netp)
         }
     }
     calc_network_cost(netp);
+    if (debugmode)
+        printf("Exiting forward_network\n");
+}
+
+void forward_network(network *netp) {
+    forward_network2(netp, 0);
 }
 
 void update_network(network *netp)
@@ -494,17 +502,30 @@ void top_predictions(network *net, int k, int *index)
 }
 
 
-float *network_predict(network *net, float *input)
+float *network_predict2(network *net, float *input, int debugmode)
 {
+    if (debugmode)
+        printf("Entering network_predict\n");
+
     network orig = *net;
     net->input = input;
     net->truth = 0;
     net->train = 0;
     net->delta = 0;
-    forward_network(net);
+    forward_network2(net, debugmode);
     float *out = net->output;
     *net = orig;
+
+    if (debugmode)
+            printf("Exiting network_predict\n");
+
     return out;
+
+}
+
+float *network_predict(network *net, float *input)
+{
+    return network_predict2(net, input, 0);
 }
 
 int num_detections(network *net, float thresh)

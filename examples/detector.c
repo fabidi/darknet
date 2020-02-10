@@ -612,11 +612,7 @@ void test_detector2(char *datacfg, char *cfgfile, char *weightfile, char *filena
         float *X = sized.data;
         time=what_time_is_it_now();
 
-        if (debugmode)
-            printf("Before network_predict\n");
-        network_predict(net, X);
-        if (debugmode)
-            printf("After network_predict\n");
+        network_predict2(net, X, debugmode);
 
         printf("%s: Predicted in %f seconds.\n", input, what_time_is_it_now()-time);
         int nboxes = 0;
