@@ -1318,9 +1318,9 @@ void load_weights_upto2(network *net, char *filename, int start, int cutoff, int
         }
     }
     sleep(4);
-    fprintf(stderr, "Done!\n");
     if (debugmode)
         printf("Exiting load_weights_upto\n");
+    fprintf(stderr, "Done!\n");
     fclose(fp);
 }
 
