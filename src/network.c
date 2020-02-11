@@ -57,7 +57,7 @@ network *load_network2(char *cfg, char *weights, int clear, int debugmode)
         printf("Entering load_network\n");
     network *net = parse_network_cfg2(cfg, debugmode);
     if(weights && weights[0] != 0){
-        load_weights(net, weights);
+        load_weights2(net, weights, debugmode);
     }
     if(clear) (*net->seen) = 0;
     if (debugmode)

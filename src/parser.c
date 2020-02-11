@@ -1226,6 +1226,13 @@ void load_convolutional_weights(layer l, FILE *fp)
 
 void load_weights_upto(network *net, char *filename, int start, int cutoff)
 {
+    load_weights_upto2(net, filename, start, cutoff, 0);
+}
+
+void load_weights_upto2(network *net, char *filename, int start, int cutoff, int debugmode)
+{
+    if (debugmode)
+        printf("Entering load_weights_upto\n");
 #ifdef GPU
     if(net->gpu_index >= 0){
         cuda_set_device(net->gpu_index);
@@ -1312,10 +1319,17 @@ void load_weights_upto(network *net, char *filename, int start, int cutoff)
     }
     fprintf(stderr, "Done!\n");
     fclose(fp);
+    if (debugmode)
+        printf("Entering load_weights_upto\n");
 }
 
 void load_weights(network *net, char *filename)
 {
-    load_weights_upto(net, filename, 0, net->n);
+    load_weights2(net, filename, 0);
+}
+
+void load_weights2(network *net, char *filename, int debugmode)
+{
+    load_weights_upto2(net, filename, 0, net->n, debugmode);
 }
 

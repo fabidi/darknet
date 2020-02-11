@@ -684,8 +684,10 @@ network *parse_network_cfg(char *filename);
 network *parse_network_cfg2(char *filename, int debugmode);
 void save_weights(network *net, char *filename);
 void load_weights(network *net, char *filename);
+void load_weights2(network *net, char *filename, int debugmode);
 void save_weights_upto(network *net, char *filename, int cutoff);
 void load_weights_upto(network *net, char *filename, int start, int cutoff);
+void load_weights_upto2(network *net, char *filename, int start, int cutoff, int debugmode);
 
 void zero_objectness(layer l);
 void get_region_detections(layer l, int w, int h, int netw, int neth, float thresh, int *map, float tree_thresh, int relative, detection *dets);
