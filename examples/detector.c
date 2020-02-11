@@ -577,9 +577,8 @@ void test_detector2(char *datacfg, char *cfgfile, char *weightfile, char *filena
     if (debugmode)
         printf("Before load_alphabet\n");
     image **alphabet = load_alphabet();
-    if (debugmode)
-        printf("Before load_network\n");
-    network *net = load_network(cfgfile, weightfile, 0);
+
+    network *net = load_network2(cfgfile, weightfile, 0, debugmode);
     if (debugmode)
         printf("Before set_batch_network\n");
     set_batch_network(net, 1);
@@ -616,7 +615,7 @@ void test_detector2(char *datacfg, char *cfgfile, char *weightfile, char *filena
         float *X = sized.data;
         time=what_time_is_it_now();
 
-        network_predict2(net, X, debugmode);
+        network_predict(net, X);
 
         printf("%s: Predicted in %f seconds.\n", input, what_time_is_it_now()-time);
         int nboxes = 0;
@@ -645,7 +644,7 @@ void test_detector2(char *datacfg, char *cfgfile, char *weightfile, char *filena
         if (filename) break;
     }
     if (debugmode) {
-        printf("Exiting test_detector");
+        printf("Exiting test_detector\n");
     }
 }
 

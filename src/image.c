@@ -503,9 +503,8 @@ void draw_detections2(image im, detection *dets, int num, float thresh, char **n
     }
 
     fprintf(resultFile, "%s", resultJsonStr);
-    if (debugmode) {
-        printf("Exiting draw_detections2");
-    }
+    if (debugmode)
+        printf("Exiting draw_detections2\n");
 }
 
 void transpose_image(image im)

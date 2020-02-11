@@ -741,6 +741,13 @@ int is_network(section *s)
 
 network *parse_network_cfg(char *filename)
 {
+    return parse_network_cfg2(filename, 0);
+}
+
+network *parse_network_cfg2(char *filename, int debugmode)
+{
+    if (debugmode)
+        printf("Entering parse_network_cfg\n");
     list *sections = read_cfg(filename);
     node *n = sections->front;
     if(!n) error("Config file has no sections");
@@ -885,6 +892,8 @@ network *parse_network_cfg(char *filename)
         net->workspace = calloc(1, workspace_size);
 #endif
     }
+    if (debugmode)
+        printf("Exiting parse_network_cfg\n");
     return net;
 }
 

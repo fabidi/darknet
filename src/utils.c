@@ -252,6 +252,7 @@ void top_k(float *a, int n, int k, int *index)
 
 void error(const char *s)
 {
+    fprintf(stderr, "perror: %s", s);
     perror(s);
     assert(0);
     exit(-1);

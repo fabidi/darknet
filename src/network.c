@@ -31,6 +31,7 @@
 #include "shortcut_layer.h"
 #include "parser.h"
 #include "data.h"
+#include "darknet.h"
 
 load_args get_base_args(network *net)
 {
@@ -50,14 +51,23 @@ load_args get_base_args(network *net)
     return args;
 }
 
-network *load_network(char *cfg, char *weights, int clear)
+network *load_network2(char *cfg, char *weights, int clear, int debugmode)
 {
-    network *net = parse_network_cfg(cfg);
+    if (debugmode)
+        printf("Entering load_network\n");
+    network *net = parse_network_cfg2(cfg, debugmode);
     if(weights && weights[0] != 0){
         load_weights(net, weights);
     }
     if(clear) (*net->seen) = 0;
+    if (debugmode)
+        printf("Exiting load_network\n");
     return net;
+}
+
+network *load_network(char *cfg, char *weights, int clear)
+{
+    return load_network2(cfg, weights, clear, 0);
 }
 
 size_t get_current_batch(network *net)
@@ -185,10 +195,8 @@ network *make_network(int n)
     return net;
 }
 
-void forward_network2(network *netp, int debugmode)
+void forward_network(network *netp)
 {
-    if (debugmode)
-        printf("Entering forward_network\n");
 #ifdef GPU
     if(netp->gpu_index >= 0){
         forward_network_gpu(netp);   
@@ -210,12 +218,6 @@ void forward_network2(network *netp, int debugmode)
         }
     }
     calc_network_cost(netp);
-    if (debugmode)
-        printf("Exiting forward_network\n");
-}
-
-void forward_network(network *netp) {
-    forward_network2(netp, 0);
 }
 
 void update_network(network *netp)
@@ -501,7 +503,6 @@ void top_predictions(network *net, int k, int *index)
     top_k(net->output, net->outputs, k, index);
 }
 
-
 float *network_predict2(network *net, float *input, int debugmode)
 {
     if (debugmode)
@@ -512,7 +513,7 @@ float *network_predict2(network *net, float *input, int debugmode)
     net->truth = 0;
     net->train = 0;
     net->delta = 0;
-    forward_network2(net, debugmode);
+    forward_network(net);
     float *out = net->output;
     *net = orig;
 
