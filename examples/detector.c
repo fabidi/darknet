@@ -564,17 +564,25 @@ void test_detector2(char *datacfg, char *cfgfile, char *weightfile, char *filena
     if (debugmode) {
         printf("Entering test_detector\n");
     }
+    if (debugmode)
+            printf("Before read_data_cfg\n");
     list *options = read_data_cfg(datacfg);
+    if (debugmode)
+            printf("Before option_find_str\n");
     char *name_list = option_find_str(options, "names", "data/names.list");
+    if (debugmode)
+            printf("Before get_labels\n");
     char **names = get_labels(name_list);
 
+    if (debugmode)
+        printf("Before load_alphabet\n");
     image **alphabet = load_alphabet();
+    if (debugmode)
+        printf("Before load_network\n");
     network *net = load_network(cfgfile, weightfile, 0);
     if (debugmode)
         printf("Before set_batch_network\n");
     set_batch_network(net, 1);
-    if (debugmode)
-        printf("Before set_batch_network\n");
     srand(2222222);
     double time;
     char buff[256];
@@ -595,13 +603,9 @@ void test_detector2(char *datacfg, char *cfgfile, char *weightfile, char *filena
         if (debugmode)
             printf("Before load_image_color\n");
         image im = load_image_color(input,0,0);
-        if (debugmode) {
-            printf("After load_image_color\n");
-            printf("Before letterbox_image\n");
-        }
-        image sized = letterbox_image(im, net->w, net->h);
         if (debugmode)
-            printf("After letterbox_image\n");
+            printf("Before letterbox_image\n");
+        image sized = letterbox_image(im, net->w, net->h);
         //image sized = resize_image(im, net->w, net->h);
         //image sized2 = resize_max(im, net->w);
         //image sized = crop_image(sized2, -((net->w - sized2.w)/2), -((net->h - sized2.h)/2), net->w, net->h);
