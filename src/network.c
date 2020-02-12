@@ -213,10 +213,10 @@ void forward_network2(network *netp, int debugmode)
     int i;
     for(i = 0; i < net.n; ++i){
         net.index = i;
-//        layer l = net.layers[i];
-//        if(l.delta){
-//            fill_cpu(l.outputs * l.batch, 0, l.delta, 1);
-//        }
+        layer l = net.layers[i];
+        if(l.delta){
+            fill_cpu(l.outputs * l.batch, 0, l.delta, 1);
+        }
 //        l.forward(l, net);
 //        net.input = l.output;
 //        if(l.truth) {
