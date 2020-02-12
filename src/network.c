@@ -521,7 +521,7 @@ float *network_predict2(network *net, float *input, int debugmode)
     net->truth = 0;
     net->train = 0;
     net->delta = 0;
-    forward_network2(net);
+    forward_network2(net, debugmode);
     float *out = net->output;
     *net = orig;
 
