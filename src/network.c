@@ -227,7 +227,7 @@ void forward_network2(network *netp, int layercount)
         {
             printf("Sleeping at %d...", i);
             sleep(sleepSec);
-            printf("Wakup\n")
+            printf("Wakup\n");
         }
     }
     calc_network_cost(netp);
