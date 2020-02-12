@@ -592,11 +592,11 @@ void test_detector2(char *datacfg, char *cfgfile, char *weightfile, char *filena
         printf("Reading image file\n");
     strncpy(input, filename, 256);
 
-//    if (debugmode)
-//        printf("Before load_image_color\n");
-//    image im = load_image_color(input,0,0);
-//    if (debugmode)
-//        printf("Before letterbox_image\n");
+    if (debugmode)
+        printf("Before load_image_color\n");
+    image im = load_image_color(input,0,0);
+    if (debugmode)
+        printf("Before letterbox_image\n");
 //    image sized = letterbox_image(im, net->w, net->h);
 //    layer l = net->layers[net->n-1];
 //
