@@ -582,11 +582,11 @@ void test_detector2(char *datacfg, char *cfgfile, char *weightfile, char *filena
     if (debugmode)
         printf("Before set_batch_network\n");
     set_batch_network(net, 1);
-//    srand(2222222);
-//    double time;
-//    char buff[256];
-//    char *input = buff;
-//    float nms=.45;
+    srand(2222222);
+    double time;
+    char buff[256];
+    char *input = buff;
+    float nms=.45;
 //    while(1){
 //        if(filename){
 //            if (debugmode)
