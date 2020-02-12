@@ -602,11 +602,11 @@ void test_detector2(char *datacfg, char *cfgfile, char *weightfile, char *filena
 
     float *X = sized.data;
     time=what_time_is_it_now();
-//
-//    network_predict(net, X);
-//
-//    printf("%s: Predicted in %f seconds.\n", input, what_time_is_it_now()-time);
-//    int nboxes = 0;
+
+    network_predict(net, X);
+
+    printf("%s: Predicted in %f seconds.\n", input, what_time_is_it_now()-time);
+    int nboxes = 0;
 //    detection *dets = get_network_boxes(net, im.w, im.h, thresh, hier_thresh, 0, 1, &nboxes);
 //
 //    if (nms) do_nms_sort(dets, nboxes, l.classes, nms);
