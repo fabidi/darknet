@@ -559,7 +559,7 @@ void validate_detector_recall(char *cfgfile, char *weightfile)
 }
 
 
-void test_detector2(char *datacfg, char *cfgfile, char *weightfile, char *filename, float thresh, float hier_thresh, char *outfile, int fullscreen, int debugmode, int imageoutput, int computecrop)
+void test_detector2(char *datacfg, char *cfgfile, char *weightfile, char *filename, float thresh, float hier_thresh, char *outfile, int fullscreen, int debugmode, int imageoutput, int computecrop, int layercount)
 {
     if (debugmode) {
         printf("Entering test_detector\n");
@@ -603,7 +603,8 @@ void test_detector2(char *datacfg, char *cfgfile, char *weightfile, char *filena
     float *X = sized.data;
     time=what_time_is_it_now();
 
-    network_predict2(net, X, debugmode);
+    printf("Before network_predict, layercount: %d\n", layercount);
+    network_predict2(net, X, debugmode, layercount);
 
     printf("%s: Predicted in %f seconds.\n", input, what_time_is_it_now()-time);
     int nboxes = 0;
@@ -635,7 +636,7 @@ void test_detector2(char *datacfg, char *cfgfile, char *weightfile, char *filena
 }
 
 void test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filename, float thresh, float hier_thresh, char *outfile, int fullscreen) {
-     test_detector2(datacfg, cfgfile, weightfile, filename, thresh, hier_thresh, outfile, fullscreen, 0, 0, 0);
+     test_detector2(datacfg, cfgfile, weightfile, filename, thresh, hier_thresh, outfile, fullscreen, 0, 0, 0, 0);
 }
 
 /*

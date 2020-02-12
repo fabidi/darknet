@@ -195,7 +195,7 @@ network *make_network(int n)
     return net;
 }
 
-void forward_network(network *netp)
+void forward_network2(network *netp, int layercount)
 {
 #ifdef GPU
     if(netp->gpu_index >= 0){
@@ -205,8 +205,10 @@ void forward_network(network *netp)
 #endif
     network net = *netp;
     int i;
-    int n = 45;
-    printf("nIter: %d\n", n);
+
+    int n = layercount;
+    if (n == 0)
+        n = net.n;
     for(i = 0; i < n; ++i){
         net.index = i;
         layer l = net.layers[i];
@@ -220,6 +222,11 @@ void forward_network(network *netp)
         }
     }
     calc_network_cost(netp);
+}
+
+void forward_network(network *netp)
+{
+    forward_network2(netp, 0);
 }
 
 void update_network(network *netp)
@@ -505,7 +512,7 @@ void top_predictions(network *net, int k, int *index)
     top_k(net->output, net->outputs, k, index);
 }
 
-float *network_predict2(network *net, float *input, int debugmode)
+float *network_predict2(network *net, float *input, int debugmode, int layercount)
 {
     if (debugmode)
         printf("Entering network_predict\n");
@@ -515,7 +522,7 @@ float *network_predict2(network *net, float *input, int debugmode)
     net->truth = 0;
     net->train = 0;
     net->delta = 0;
-    forward_network(net);
+    forward_network2(net, layercount);
     float *out = net->output;
     *net = orig;
 
@@ -528,7 +535,7 @@ float *network_predict2(network *net, float *input, int debugmode)
 
 float *network_predict(network *net, float *input)
 {
-    return network_predict2(net, input, 0);
+    return network_predict2(net, input, 0, 0);
 }
 
 int num_detections(network *net, float thresh)
