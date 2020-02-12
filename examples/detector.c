@@ -603,6 +603,8 @@ void test_detector2(char *datacfg, char *cfgfile, char *weightfile, char *filena
     float *X = sized.data;
     time=what_time_is_it_now();
 
+    sleep(5);
+
     printf("Before network_predict, layercount: %d\n", layercount);
     network_predict2(net, X, debugmode, layercount);
 
