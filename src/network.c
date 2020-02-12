@@ -213,11 +213,40 @@ void forward_network2(network *netp, int debugmode)
     int i;
     for(i = 0; i < net.n; ++i){
         net.index = i;
-        layer l = net.layers[i];
-        if(l.delta){
-            fill_cpu(l.outputs * l.batch, 0, l.delta, 1);
+        layer lyr = net.layers[i];
+        if(lyr.delta){
+            fill_cpu(lyr.outputs * lyr.batch, 0, lyr.delta, 1);
         }
-        l.forward2(l, net, debugmode);
+//        l.forward2(l, net, debugmode);
+        
+        int k,b;
+        int w = lyr.w;
+        int h = lyr.h;
+        int c = lyr.c;
+        scal_cpu(w*h*c*lyr.batch, 0, lyr.squared, 1);
+
+        for(b = 0; b < lyr.batch; ++b){
+            float *squared = lyr.squared + w*h*c*b;
+            float *norms   = lyr.norms + w*h*c*b;
+            float *input   = net.input + w*h*c*b;
+            pow_cpu(w*h*c, 2, input, 1, squared, 1);
+
+            const_cpu(w*h, lyr.kappa, norms, 1);
+            for(k = 0; k < lyr.size/2; ++k){
+                axpy_cpu(w*h, lyr.alpha, squared + w*h*k, 1, norms, 1);
+            }
+
+            for(k = 1; k < lyr.c; ++k){
+                copy_cpu(w*h, norms + w*h*(k-1), 1, norms + w*h*k, 1);
+                int prev = k - ((lyr.size-1)/2) - 1;
+                int next = k + (lyr.size/2);
+                if(prev >= 0)      axpy_cpu(w*h, -lyr.alpha, squared + w*h*prev, 1, norms + w*h*k, 1);
+                if(next < lyr.c) axpy_cpu(w*h,  lyr.alpha, squared + w*h*next, 1, norms + w*h*k, 1);
+            }
+        }
+        pow_cpu(w*h*c*lyr.batch, -lyr.beta, lyr.norms, 1, lyr.output, 1);
+        mul_cpu(w*h*c*lyr.batch, net.input, 1, lyr.output, 1);
+        
 //        net.input = l.output;
 //        if(l.truth) {
 //            net.truth = l.output;
