@@ -581,7 +581,7 @@ void test_detector2(char *datacfg, char *cfgfile, char *weightfile, char *filena
     network *net = load_network2(cfgfile, weightfile, 0, debugmode);
     if (debugmode)
         printf("Before set_batch_network\n");
-//    set_batch_network(net, 1);
+    set_batch_network(net, 1);
 //    srand(2222222);
 //    double time;
 //    char buff[256];
