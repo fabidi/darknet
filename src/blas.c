@@ -185,7 +185,7 @@ void scal_cpu(int N, float ALPHA, float *X, int INCX)
 {
     int i;
     printf("Entering scal_cpu, N: %d, X: %.4f", N, X);
-    for(i = 0; i < N; ++i) X[i*INCX] *= ALPHA;
+//    for(i = 0; i < N; ++i) X[i*INCX] *= ALPHA;
 }
 
 void fill_cpu(int N, float ALPHA, float *X, int INCX)
