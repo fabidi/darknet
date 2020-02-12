@@ -217,7 +217,7 @@ void forward_network2(network *netp, int debugmode)
         if(l.delta){
             fill_cpu(l.outputs * l.batch, 0, l.delta, 1);
         }
-//        l.forward(l, net);
+        l.forward(l, net);
 //        net.input = l.output;
 //        if(l.truth) {
 //            net.truth = l.output;
