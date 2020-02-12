@@ -223,7 +223,16 @@ void forward_network2(network *netp, int debugmode)
         int w = lyr.w;
         int h = lyr.h;
         int c = lyr.c;
-        scal_cpu(w*h*c*lyr.batch, 0, lyr.squared, 1);
+//        scal_cpu(w*h*c*lyr.batch, 0, lyr.squared, 1);
+
+        int N = w*h*c*lyr.batch;
+        float ALPHA =0;
+        float *X = lyr.squared;
+        int INCX = 1;
+
+        int j;
+        for(j = 0; j < N; ++j) X[i*INCX] *= ALPHA;
+
 //
 //        for(b = 0; b < lyr.batch; ++b){
 //            float *squared = lyr.squared + w*h*c*b;
