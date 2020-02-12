@@ -605,29 +605,29 @@ void test_detector2(char *datacfg, char *cfgfile, char *weightfile, char *filena
 
     network_predict2(net, X, debugmode);
 
-//    printf("%s: Predicted in %f seconds.\n", input, what_time_is_it_now()-time);
-//    int nboxes = 0;
-//    detection *dets = get_network_boxes(net, im.w, im.h, thresh, hier_thresh, 0, 1, &nboxes);
-//
-//    if (nms) do_nms_sort(dets, nboxes, l.classes, nms);
-//    draw_detections2(im, dets, nboxes, thresh, names, alphabet, l.classes, debugmode, imageoutput, computecrop);
-//    free_detections(dets, nboxes);
-//
-//    if (imageoutput) {
-//        if(outfile){
-//            save_image(im, outfile);
-//        }
-//        else{
-//            save_image(im, "predictions");
-//            #ifdef OPENCV
-//            make_window("predictions", 512, 512, 0);
-//            show_image(im, "predictions", 0);
-//            #endif
-//        }
-//    }
-//
-//    free_image(im);
-//    free_image(sized);
+    printf("%s: Predicted in %f seconds.\n", input, what_time_is_it_now()-time);
+    int nboxes = 0;
+    detection *dets = get_network_boxes(net, im.w, im.h, thresh, hier_thresh, 0, 1, &nboxes);
+
+    if (nms) do_nms_sort(dets, nboxes, l.classes, nms);
+    draw_detections2(im, dets, nboxes, thresh, names, alphabet, l.classes, debugmode, imageoutput, computecrop);
+    free_detections(dets, nboxes);
+
+    if (imageoutput) {
+        if(outfile){
+            save_image(im, outfile);
+        }
+        else{
+            save_image(im, "predictions");
+            #ifdef OPENCV
+            make_window("predictions", 512, 512, 0);
+            show_image(im, "predictions", 0);
+            #endif
+        }
+    }
+
+    free_image(im);
+    free_image(sized);
 
     if (debugmode) {
         printf("Exiting test_detector\n");
