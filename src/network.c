@@ -231,7 +231,7 @@ void forward_network2(network *netp, int debugmode)
         int INCX = 1;
 
         int j;
-        for(j = 0; j < 2; ++j) {
+        for(j = 0; j < 4; ++j) {
             X[i*INCX] *= ALPHA;
         }
 
