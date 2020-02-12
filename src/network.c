@@ -197,6 +197,12 @@ network *make_network(int n)
 
 void forward_network(network *netp)
 {
+    forward_network2(netp, 0);
+}
+void forward_network2(network *netp, int debugmode)
+{
+    if (debugmode)
+        printf("Entering forward_network2\n");
 #ifdef GPU
     if(netp->gpu_index >= 0){
         forward_network_gpu(netp);   
@@ -205,19 +211,21 @@ void forward_network(network *netp)
 #endif
     network net = *netp;
     int i;
-    for(i = 0; i < net.n; ++i){
-        net.index = i;
-        layer l = net.layers[i];
-        if(l.delta){
-            fill_cpu(l.outputs * l.batch, 0, l.delta, 1);
-        }
-        l.forward(l, net);
-        net.input = l.output;
-        if(l.truth) {
-            net.truth = l.output;
-        }
-    }
-    calc_network_cost(netp);
+//    for(i = 0; i < net.n; ++i){
+//        net.index = i;
+//        layer l = net.layers[i];
+//        if(l.delta){
+//            fill_cpu(l.outputs * l.batch, 0, l.delta, 1);
+//        }
+//        l.forward(l, net);
+//        net.input = l.output;
+//        if(l.truth) {
+//            net.truth = l.output;
+//        }
+//    }
+//    calc_network_cost(netp);
+    if (debugmode)
+        printf("Exiting forward_network2\n");
 }
 
 void update_network(network *netp)
@@ -513,7 +521,7 @@ float *network_predict2(network *net, float *input, int debugmode)
     net->truth = 0;
     net->train = 0;
     net->delta = 0;
-//    forward_network(net);
+    forward_network2(net);
     float *out = net->output;
     *net = orig;
 

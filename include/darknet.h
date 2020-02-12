@@ -611,6 +611,7 @@ data *tile_data(data orig, int divs, int size);
 data select_data(data *orig, int *inds);
 
 void forward_network(network *net);
+void forward_network2(network *net, int debugmode);
 void backward_network(network *net);
 void update_network(network *net);
 
