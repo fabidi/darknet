@@ -73,10 +73,10 @@ void forward_normalization_layer2(const layer layer, network net, int debugmode)
 {
     if (debugmode)
         printf("Entering forward_normalization_layer\n");
-    int k,b;
-    int w = layer.w;
-    int h = layer.h;
-    int c = layer.c;
+//    int k,b;
+//    int w = layer.w;
+//    int h = layer.h;
+//    int c = layer.c;
 //    scal_cpu(w*h*c*layer.batch, 0, layer.squared, 1);
 //
 //    for(b = 0; b < layer.batch; ++b){
