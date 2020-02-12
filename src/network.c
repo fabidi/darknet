@@ -206,7 +206,7 @@ void forward_network(network *netp)
     network net = *netp;
     int i;
     printf("net.n: %d\n", net.n);
-    for(i = 0; i < 50; ++i){
+    for(i = 0; i < 45; ++i){
         net.index = i;
         layer l = net.layers[i];
         if(l.delta){
