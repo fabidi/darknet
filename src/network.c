@@ -508,8 +508,8 @@ float *network_predict2(network *net, float *input, int debugmode)
     if (debugmode)
         printf("Entering network_predict\n");
 
-//    network orig = *net;
-//    net->input = input;
+    network orig = *net;
+    net->input = input;
 //    net->truth = 0;
 //    net->train = 0;
 //    net->delta = 0;
