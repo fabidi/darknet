@@ -510,12 +510,12 @@ float *network_predict2(network *net, float *input, int debugmode)
 
     network orig = *net;
     net->input = input;
-//    net->truth = 0;
-//    net->train = 0;
-//    net->delta = 0;
+    net->truth = 0;
+    net->train = 0;
+    net->delta = 0;
 //    forward_network(net);
-//    float *out = net->output;
-//    *net = orig;
+    float *out = net->output;
+    *net = orig;
 
     if (debugmode)
             printf("Exiting network_predict\n");
