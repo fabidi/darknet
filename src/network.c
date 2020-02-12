@@ -205,7 +205,7 @@ void forward_network(network *netp)
 #endif
     network net = *netp;
     int i;
-    int n = 46;
+    int n = 45;
     printf("nIter: %d\n", n);
     for(i = 0; i < n; ++i){
         net.index = i;
