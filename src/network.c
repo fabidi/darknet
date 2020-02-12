@@ -211,18 +211,18 @@ void forward_network2(network *netp, int debugmode)
 #endif
     network net = *netp;
     int i;
-//    for(i = 0; i < net.n; ++i){
-//        net.index = i;
-//        layer l = net.layers[i];
-//        if(l.delta){
-//            fill_cpu(l.outputs * l.batch, 0, l.delta, 1);
-//        }
-//        l.forward(l, net);
-//        net.input = l.output;
-//        if(l.truth) {
-//            net.truth = l.output;
-//        }
-//    }
+    for(i = 0; i < net.n; ++i){
+        net.index = i;
+        layer l = net.layers[i];
+        if(l.delta){
+            fill_cpu(l.outputs * l.batch, 0, l.delta, 1);
+        }
+        l.forward(l, net);
+        net.input = l.output;
+        if(l.truth) {
+            net.truth = l.output;
+        }
+    }
 //    calc_network_cost(netp);
     if (debugmode)
         printf("Exiting forward_network2\n");
