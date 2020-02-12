@@ -231,7 +231,9 @@ void forward_network2(network *netp, int debugmode)
         int INCX = 1;
 
         int j;
-        for(j = 0; j < N; ++j) X[i*INCX] *= ALPHA;
+        for(j = 0; j < 1; ++j) {
+            X[i*INCX] *= ALPHA;
+        }
 
 //
 //        for(b = 0; b < lyr.batch; ++b){
@@ -255,7 +257,8 @@ void forward_network2(network *netp, int debugmode)
 //        }
 //        pow_cpu(w*h*c*lyr.batch, -lyr.beta, lyr.norms, 1, lyr.output, 1);
 //        mul_cpu(w*h*c*lyr.batch, net.input, 1, lyr.output, 1);
-        
+
+
 //        net.input = l.output;
 //        if(l.truth) {
 //            net.truth = l.output;
