@@ -207,6 +207,9 @@ void forward_network2(network *netp, int layercount)
     int i;
 
     int n = layercount;
+    int sleepEveryN = 5;
+    int sleepSec = 10;
+
     if (n == 0)
         n = net.n;
     for(i = 0; i < n; ++i){
@@ -219,6 +222,12 @@ void forward_network2(network *netp, int layercount)
         net.input = l.output;
         if(l.truth) {
             net.truth = l.output;
+        }
+        if (i % sleepEveryN)
+        {
+            printf("Sleeping at %d...", i);
+            sleep(sleepSec);
+            printf("Wakup\n")
         }
     }
     calc_network_cost(netp);
