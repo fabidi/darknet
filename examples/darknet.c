@@ -438,7 +438,9 @@ int main(int argc, char **argv)
         int debugmode = find_arg(argc, argv, "-debugmode");
         int imageoutput = find_arg(argc, argv, "-imageoutput");
         int computecrop = find_arg(argc, argv, "-computecrop");
-        int layercount = find_arg(argc, argv, "-layercount");
+        int layercount = find_int_arg(argc, argv, "-layercount", 0);
+        
+        printf("layercountActual: %d\n", layercount);
         test_detector2("cfg/coco.data", argv[2], argv[3], filename, thresh, .5, outfile, fullscreen, debugmode, imageoutput, computecrop, layercount);
     } else if (0 == strcmp(argv[1], "cifar")){
         run_cifar(argc, argv);
