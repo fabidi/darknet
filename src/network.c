@@ -223,7 +223,7 @@ void forward_network2(network *netp, int debugmode)
         int w = lyr.w;
         int h = lyr.h;
         int c = lyr.c;
-//        scal_cpu(w*h*c*lyr.batch, 0, lyr.squared, 1);
+        scal_cpu(w*h*c*lyr.batch, 0, lyr.squared, 1);
 //
 //        for(b = 0; b < lyr.batch; ++b){
 //            float *squared = lyr.squared + w*h*c*b;
