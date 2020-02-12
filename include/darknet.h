@@ -117,7 +117,6 @@ struct layer{
     ACTIVATION activation;
     COST_TYPE cost_type;
     void (*forward)   (struct layer, struct network);
-    void (*forward2)   (struct layer, struct network, int debugmode);
     void (*backward)  (struct layer, struct network);
     void (*update)    (struct layer, update_args);
     void (*forward_gpu)   (struct layer, struct network);
@@ -612,7 +611,6 @@ data *tile_data(data orig, int divs, int size);
 data select_data(data *orig, int *inds);
 
 void forward_network(network *net);
-void forward_network2(network *net, int debugmode);
 void backward_network(network *net);
 void update_network(network *net);
 
