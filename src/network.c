@@ -223,7 +223,7 @@ void forward_network2(network *netp, int layercount)
         if(l.truth) {
             net.truth = l.output;
         }
-        if (i % sleepEveryN)
+        if (i % sleepEveryN == 0)
         {
             printf("Sleeping at %d...", i);
             sleep(sleepSec);
