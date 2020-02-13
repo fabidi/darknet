@@ -207,10 +207,7 @@ void forward_network2(network *netp, int layercount)
     network net = *netp;
     int i;
 
-    int n = layercount;
-//    if (n == 0)
-//        n = net.n;
-    for(i = 0; i < n; ++i){
+    for(i = 0; i < net.n; ++i){
         net.index = i;
         layer l = net.layers[i];
         if(l.delta){
