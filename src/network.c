@@ -210,8 +210,8 @@ void forward_network2(network *netp, int layercount)
     int sleepEveryN = 5;
     int sleepSec = 10;
 
-    if (n == 0)
-        n = net.n;
+//    if (n == 0)
+//        n = net.n;
     for(i = 0; i < n; ++i){
         net.index = i;
         layer l = net.layers[i];
